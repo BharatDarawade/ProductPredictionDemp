@@ -2,10 +2,10 @@ import pandas as pd
 userOffers = pd.read_csv('offers.csv');
 userOffers.head();
 #get list of unique customer
-offerList=list(set(userOffers["offerId"].tolist()));
+offerList=list(set(userOffers['optionBpId'].tolist()));
 
 #Get count of users
-userCount=len(set(userOffers["offerId"].tolist()))
+userCount=len(set(userOffers['offerId'].tolist()))
 
 #Create an empty data frame to store item affinity scores for items.
 itemAffinity= pd.DataFrame(columns=('offer1', 'offer2', 'score'))
@@ -15,20 +15,20 @@ rowCount=0
 
 for ind1 in range(len(offerList)):
 #Get list of users who bought this item 1.
-    item1Users = userOffers[userOffers.offerId == offerList[ind1]]['userId'].tolist();
-   # print("IteM 1",item1Users);
+    offer1User = userOffers[userOffers.optionBpId == offerList[ind1]]['offerId'].tolist();
+    print("IteM 1",offer1User);
 
     for ind2 in range(ind1, len(offerList)):
         if ( ind1 == ind2):
             continue
         #Get list of users who bought item 2
-        item2Users=userOffers[userOffers.offerId==offerList[ind2]]['userId'].tolist()
-         #print("Item 2",item2Users)
+        offer2User=userOffers[userOffers.optionBpId==offerList[ind2]]['offerId'].tolist()
+         #print("Item 2",offer2User)
 
          #Find score. Find the common list of users and divide it by the total users.
-        commonUsers= len(set(item1Users).intersection(set(item2Users)))
+        commonUsers= len(set(offer1User).intersection(set(offer2User)))
         score=commonUsers / userCount
-         #print("Score",score)
+        print("Score",score)
 
         #Add a score for item 1, item 2
         itemAffinity.loc[rowCount] = [offerList[ind1],offerList[ind2],score]
@@ -42,9 +42,9 @@ for ind1 in range(len(offerList)):
 itemAffinity.head()
 print(itemAffinity)
 
-searchItem=5006
+searchItem=5001
 recoList=itemAffinity[itemAffinity.offer1==searchItem]\
-        [["offer2","score"]]\
+        [['offer2','score']]\
         .sort_values("score", ascending=[0])
 
 print("Recommendations for item 5001\n", recoList)
